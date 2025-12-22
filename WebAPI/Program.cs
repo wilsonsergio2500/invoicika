@@ -57,6 +57,7 @@ builder.Services.AddSingleton<IFileProvider>(
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
@@ -83,6 +84,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseExceptionHandler();
 
 //app.UseHttpsRedirection();
 app.UseCors("AllowAllOrigins");
