@@ -15,6 +15,11 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
+import { environment } from '../environments/environment';
+import {getStates} from "./states";
 
 registerLocaleData(en);
 
@@ -31,7 +36,16 @@ registerLocaleData(en);
     IconsProviderModule,
     NzLayoutModule,
     NzMenuModule,
-    NzDropDownModule
+    NzDropDownModule,
+    NgxsModule.forRoot([
+      ...getStates()
+    ], {
+      developmentMode: !environment.production
+    }),
+    NgxsReduxDevtoolsPluginModule.forRoot({
+      disabled: environment.production
+    }),
+    NgxsRouterPluginModule.forRoot()
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US, },
