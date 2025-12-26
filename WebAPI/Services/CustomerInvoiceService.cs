@@ -44,6 +44,9 @@ namespace WebAPI.Services
                 .Include(c => c.VAT)
                 .Include(c => c.CustomerInvoiceLines)
                 .ThenInclude(l => l.Item)
+                .Include(c => c.CustomerInvoiceGroupLines)
+                .ThenInclude(g => g.GroupItemLines)
+                .ThenInclude(gi => gi.Item)
                 .FirstOrDefaultAsync(c => c.CustomerInvoiceId == id);
 
             // Map to DTO (consider using AutoMapper)
@@ -68,6 +71,26 @@ namespace WebAPI.Services
                     ItemDescription = l.Item.Description,
                     Quantity = l.Quantity,
                     Price = l.Price
+                }).ToList(),
+                CustomerInvoiceGroupLines = invoice.CustomerInvoiceGroupLines.Select(g => new CustomerInvoiceGroupLineDto
+                {
+                    InvoiceGroupLineId = g.InvoiceGroupLineId,
+                    CustomerInvoice_id = g.CustomerInvoice_id,
+                    Title = g.Title,
+                    Description = g.Description,
+                    SubTotalAmount = g.SubTotalAmount,
+                    VatAmount = g.VatAmount,
+                    TotalAmount = g.TotalAmount,
+                    GroupItemLines = g.GroupItemLines.Select(gi => new CustomerInvoiceGroupItemLineDto
+                    {
+                        GroupItemLineId = gi.GroupItemLineId,
+                        CustomerInvoiceGroupLine_id = gi.CustomerInvoiceGroupLine_id,
+                        Item_id = gi.Item_id,
+                        ItemName = gi.Item.Name,
+                        ItemDescription = gi.Item.Description,
+                        Quantity = gi.Quantity,
+                        Price = gi.Price
+                    }).ToList()
                 }).ToList()
             };
         }
@@ -80,6 +103,9 @@ namespace WebAPI.Services
                 .Include(c => c.VAT)
                 .Include(c => c.CustomerInvoiceLines)
                 .ThenInclude(l => l.Item)
+                .Include(c => c.CustomerInvoiceGroupLines)
+                .ThenInclude(g => g.GroupItemLines)
+                .ThenInclude(gi => gi.Item)
                 .ToListAsync();
 
             // Map to DTOs (consider using AutoMapper)
@@ -104,6 +130,26 @@ namespace WebAPI.Services
                     ItemDescription = l.Item.Description,
                     Quantity = l.Quantity,
                     Price = l.Price
+                }).ToList(),
+                CustomerInvoiceGroupLines = invoice.CustomerInvoiceGroupLines.Select(g => new CustomerInvoiceGroupLineDto
+                {
+                    InvoiceGroupLineId = g.InvoiceGroupLineId,
+                    CustomerInvoice_id = g.CustomerInvoice_id,
+                    Title = g.Title,
+                    Description = g.Description,
+                    SubTotalAmount = g.SubTotalAmount,
+                    VatAmount = g.VatAmount,
+                    TotalAmount = g.TotalAmount,
+                    GroupItemLines = g.GroupItemLines.Select(gi => new CustomerInvoiceGroupItemLineDto
+                    {
+                        GroupItemLineId = gi.GroupItemLineId,
+                        CustomerInvoiceGroupLine_id = gi.CustomerInvoiceGroupLine_id,
+                        Item_id = gi.Item_id,
+                        ItemName = gi.Item.Name,
+                        ItemDescription = gi.Item.Description,
+                        Quantity = gi.Quantity,
+                        Price = gi.Price
+                    }).ToList()
                 }).ToList()
             });
         }
@@ -112,7 +158,7 @@ namespace WebAPI.Services
         {
             var invoice = new CustomerInvoice
             {
-                CustomerInvoiceId = dto.CustomerInvoiceId,
+                CustomerInvoiceId = dto.CustomerInvoiceId == Guid.Empty ? Guid.NewGuid() : dto.CustomerInvoiceId,
                 Customer_id = dto.Customer_id,
                 User_id = dto.User_id,
                 Vat_id = dto.Vat_id,
@@ -124,11 +170,29 @@ namespace WebAPI.Services
                 TotalAmount = dto.TotalAmount,
                 CustomerInvoiceLines = dto.CustomerInvoiceLines.Select(l => new CustomerInvoiceLine
                 {
-                    InvoiceLineId = l.InvoiceLineId,
+                    InvoiceLineId = l.InvoiceLineId == Guid.Empty ? Guid.NewGuid() : l.InvoiceLineId,
                     CustomerInvoice_id = l.CustomerInvoice_id,
                     Item_id = l.Item_id,
                     Quantity = l.Quantity,
                     Price = l.Price
+                }).ToList(),
+                CustomerInvoiceGroupLines = dto.CustomerInvoiceGroupLines.Select(g => new CustomerInvoiceGroupLine
+                {
+                    InvoiceGroupLineId = g.InvoiceGroupLineId == Guid.Empty ? Guid.NewGuid() : g.InvoiceGroupLineId,
+                    CustomerInvoice_id = g.CustomerInvoice_id,
+                    Title = g.Title,
+                    Description = g.Description,
+                    SubTotalAmount = g.SubTotalAmount,
+                    VatAmount = g.VatAmount,
+                    TotalAmount = g.TotalAmount,
+                    GroupItemLines = g.GroupItemLines.Select(gi => new CustomerInvoiceGroupItemLine
+                    {
+                        GroupItemLineId = gi.GroupItemLineId == Guid.Empty ? Guid.NewGuid() : gi.GroupItemLineId,
+                        CustomerInvoiceGroupLine_id = gi.CustomerInvoiceGroupLine_id,
+                        Item_id = gi.Item_id,
+                        Quantity = gi.Quantity,
+                        Price = gi.Price
+                    }).ToList()
                 }).ToList()
             };
 
@@ -149,6 +213,8 @@ namespace WebAPI.Services
         {
             var existingInvoice = await _context.CustomerInvoices
                 .Include(i => i.CustomerInvoiceLines)
+                .Include(i => i.CustomerInvoiceGroupLines)
+                .ThenInclude(g => g.GroupItemLines)
                 .FirstOrDefaultAsync(i => i.CustomerInvoiceId == id);
 
             if (existingInvoice == null) return false;
@@ -168,11 +234,35 @@ namespace WebAPI.Services
             {
                 existingInvoice.CustomerInvoiceLines.Add(new CustomerInvoiceLine
                 {
-                    InvoiceLineId = line.InvoiceLineId,
+                    InvoiceLineId = line.InvoiceLineId == Guid.Empty ? Guid.NewGuid() : line.InvoiceLineId,
                     CustomerInvoice_id = line.CustomerInvoice_id,
                     Item_id = line.Item_id,
                     Quantity = line.Quantity,
                     Price = line.Price
+                });
+            }
+
+            // Update group lines
+            existingInvoice.CustomerInvoiceGroupLines.Clear();
+            foreach (var groupLineDto in updatedInvoice.CustomerInvoiceGroupLines)
+            {
+                existingInvoice.CustomerInvoiceGroupLines.Add(new CustomerInvoiceGroupLine
+                {
+                    InvoiceGroupLineId = groupLineDto.InvoiceGroupLineId == Guid.Empty ? Guid.NewGuid() : groupLineDto.InvoiceGroupLineId,
+                    CustomerInvoice_id = groupLineDto.CustomerInvoice_id,
+                    Title = groupLineDto.Title,
+                    Description = groupLineDto.Description,
+                    SubTotalAmount = groupLineDto.SubTotalAmount,
+                    VatAmount = groupLineDto.VatAmount,
+                    TotalAmount = groupLineDto.TotalAmount,
+                    GroupItemLines = groupLineDto.GroupItemLines.Select(gi => new CustomerInvoiceGroupItemLine
+                    {
+                        GroupItemLineId = gi.GroupItemLineId == Guid.Empty ? Guid.NewGuid() : gi.GroupItemLineId,
+                        CustomerInvoiceGroupLine_id = gi.CustomerInvoiceGroupLine_id,
+                        Item_id = gi.Item_id,
+                        Quantity = gi.Quantity,
+                        Price = gi.Price
+                    }).ToList()
                 });
             }
 
@@ -198,6 +288,9 @@ namespace WebAPI.Services
             .Include(c => c.VAT)       
             .Include(c => c.CustomerInvoiceLines)
             .ThenInclude(l => l.Item)
+            .Include(c => c.CustomerInvoiceGroupLines)
+            .ThenInclude(g => g.GroupItemLines)
+            .ThenInclude(gi => gi.Item)
             .FirstOrDefaultAsync(c => c.CustomerInvoiceId == invoiceId);
 
             if (invoice == null)
@@ -324,6 +417,38 @@ namespace WebAPI.Services
                                 static IContainer CellStyle(IContainer container)
                                 {
                                     return container.BorderBottom(1).BorderColor(Colors.Blue.Lighten2).PaddingVertical(3);
+                                }
+                            }
+
+                            foreach (var group in invoice.CustomerInvoiceGroupLines)
+                            {
+                                table.Cell().ColumnSpan(5).Element(GroupHeaderStyle).Text(group.Title).Bold();
+                                
+                                static IContainer GroupHeaderStyle(IContainer container)
+                                {
+                                    return container.PaddingTop(5).PaddingBottom(2).BorderBottom(1).BorderColor(Colors.Grey.Lighten2);
+                                }
+
+                                foreach (var line in group.GroupItemLines)
+                                {
+                                    table.Cell().Element(GroupCellStyle).Text(line.Item.Name);
+                                    table.Cell().Element(GroupCellStyle).Text(line.Item.Description);
+                                    table.Cell().Element(GroupCellStyle).AlignRight().Text(line.Quantity.ToString("N0", CultureInfo.InvariantCulture));
+                                    table.Cell().Element(GroupCellStyle).AlignRight().Text($"{line.Price.ToString("F2", CultureInfo.InvariantCulture)}$");
+                                    table.Cell().Element(GroupCellStyle).AlignRight().Text($"{(line.Price * line.Quantity).ToString("F2", CultureInfo.InvariantCulture)}$");
+
+                                    static IContainer GroupCellStyle(IContainer container)
+                                    {
+                                        return container.BorderBottom(1).BorderColor(Colors.Blue.Lighten2).PaddingVertical(3);
+                                    }
+                                }
+
+                                table.Cell().ColumnSpan(4).Element(GroupFooterStyle).Text("Group Total").Italic();
+                                table.Cell().Element(GroupFooterStyle).AlignRight().Text($"{group.TotalAmount.ToString("F2", CultureInfo.InvariantCulture)}$").Bold();
+
+                                static IContainer GroupFooterStyle(IContainer container)
+                                {
+                                    return container.PaddingVertical(2).BorderBottom(1).BorderColor(Colors.Blue.Lighten2);
                                 }
                             }
                         });

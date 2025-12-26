@@ -43,6 +43,8 @@ public class CustomerInvoice
 
     public virtual ICollection<CustomerInvoiceLine> CustomerInvoiceLines { get; set; } = new List<CustomerInvoiceLine>();
 
+    public virtual ICollection<CustomerInvoiceGroupLine> CustomerInvoiceGroupLines { get; set; } = new List<CustomerInvoiceGroupLine>();
+
     [Required]
     public Guid Vat_id { get; set; }
 
