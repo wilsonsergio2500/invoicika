@@ -51,4 +51,7 @@ public class CustomerInvoice
     [ForeignKey(nameof(Vat_id))]
     [JsonIgnore]
     public virtual VAT VAT { get; set; }
+
+    [Required]
+    public InvoiceStatus Status { get; set; } = InvoiceStatus.Draft;
 }

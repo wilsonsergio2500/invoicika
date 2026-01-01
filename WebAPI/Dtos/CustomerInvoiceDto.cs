@@ -11,6 +11,7 @@
         public decimal SubTotalAmount { get; set; }
         public decimal VatAmount { get; set; }
         public decimal TotalAmount { get; set; }
+        public int? Status { get; set; } = 0;
         public ICollection<CustomerInvoiceLineDto> CustomerInvoiceLines { get; set; } = new List<CustomerInvoiceLineDto>();
         public ICollection<CustomerInvoiceGroupLineDto> CustomerInvoiceGroupLines { get; set; } = new List<CustomerInvoiceGroupLineDto>();
         public Guid Vat_id { get; set; }
