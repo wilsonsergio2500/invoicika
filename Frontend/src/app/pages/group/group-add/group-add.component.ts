@@ -23,6 +23,11 @@ export class GroupAddComponent implements OnInit {
 
   private user_id = this.store.selectSnapshot(state => state.auth.current.userId);
 
+  get selectedItems(): any[] {
+    const selectedIds = this.addGroupForm.get('itemIds')?.value || [];
+    return this.listOfItems.filter(item => selectedIds.includes(item.itemId));
+  }
+
   constructor(
     private readonly store: Store,
     private readonly fb: NonNullableFormBuilder,
