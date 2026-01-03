@@ -8,6 +8,7 @@ import { InvoiceEditComponent } from './invoice-edit/invoice-edit.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InvoiceShowComponent } from './invoice-show/invoice-show.component';
 import { NgZorroModule } from '@modules/ng-zorro/ng-zorro.module';
+import {SharedModule} from "@modules";
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { NgZorroModule } from '@modules/ng-zorro/ng-zorro.module';
     InvoiceRoutingModule,
     ReactiveFormsModule,
     NgZorroModule,
+    SharedModule
   ],
 })
 export class InvoiceModule {}
