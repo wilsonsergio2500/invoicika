@@ -11,15 +11,13 @@ import { FormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IconsProviderModule } from './icons-provider.module';
-import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
-import { environment } from '../environments/environment';
+import { environment } from '@env/environment';
 import {getStates} from "./states";
+import { NgZorroModule } from '@modules';
 
 registerLocaleData(en);
 
@@ -34,9 +32,7 @@ registerLocaleData(en);
     HttpClientModule,
     BrowserAnimationsModule,
     IconsProviderModule,
-    NzLayoutModule,
-    NzMenuModule,
-    NzDropDownModule,
+    NgZorroModule,
     NgxsModule.forRoot([
       ...getStates()
     ], {

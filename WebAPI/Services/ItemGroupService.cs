@@ -61,7 +61,7 @@ namespace WebAPI.Services
         {
             var group = new ItemGroup
             {
-                ItemGroupId = dto.ItemGroupId == Guid.Empty ? Guid.NewGuid() : dto.ItemGroupId,
+                ItemGroupId = Guid.NewGuid(),
                 Title = dto.Title,
                 Description = dto.Description,
                 User_id = dto.User_id,
