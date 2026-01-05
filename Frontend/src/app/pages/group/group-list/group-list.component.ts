@@ -43,7 +43,6 @@ export class GroupListComponent implements OnInit {
       filters.push({ key: 'searchTerm', value: [this.searchText] });
     }
     this.itemGroupService.getItemGroups(pageIndex, pageSize, sortField, sortOrder, filters, searchTerm).subscribe(response => {
-      console.log(response);
       this.loading = false;
       this.total = response.totalCount;
       this.listOfGroups = response.items;

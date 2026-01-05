@@ -19,6 +19,11 @@ export class GroupEditComponent implements OnInit {
   loadingItems = false;
   private user_id = this.store.selectSnapshot(state => state.auth.current.userId);
 
+  get selectedItems(): any[] {
+    const selectedIds = this.editGroupForm.get('itemIds')?.value || [];
+    return this.listOfItems.filter(item => selectedIds.includes(item.itemId));
+  }
+
   constructor(
     private readonly store: Store,
     private readonly fb: NonNullableFormBuilder,
@@ -60,7 +65,7 @@ export class GroupEditComponent implements OnInit {
       this.editGroupForm.patchValue({
         title: group.title,
         description: group.description,
-        itemIds: group.items ? group.items.map((i: any) => i.itemId) : []
+        itemIds: group.itemIds || []
       });
       this.loading = false;
     }, error => {
