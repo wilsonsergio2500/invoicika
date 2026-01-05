@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Dtos;
 using WebAPI.Services;
@@ -23,10 +24,11 @@ namespace WebAPI.Controllers
             return group;
         }
 
+        [Authorize(Roles = "Employee, Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ItemGroupDto>>> GetItemGroups()
+        public async Task<ActionResult<IEnumerable<ItemGroupDto>>> GetItemGroups([FromQuery] string? searchTerm, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var groups = await _itemGroupService.GetAllItemGroupsAsync();
+            var groups = await _itemGroupService.GetGroupItemsPagedAndSortedAsync(searchTerm, pageNumber, pageSize);
             return Ok(groups);
         }
 

@@ -35,6 +35,7 @@
     <tr>
       <th nzColumnKey="title" nzShowSort>Title</th>
       <th nzColumnKey="description" nzShowSort>Description</th>
+      <th nzColumnKey="items" >Items</th>
       <th nzColumnKey="actions">Actions</th>
     </tr>
   </thead>
@@ -42,6 +43,7 @@
     <tr *ngFor="let group of listOfGroups">
       <td>{{ group.title }}</td>
       <td>{{ group.description }}</td>
+      <td>{{ group.itemIds?.length || 0 }}</td>
       <td>
         <a [routerLink]="['/groups/edit', group.itemGroupId]">
           <span nz-icon nzType="edit" nzTheme="outline" style="color: orange;"></span>

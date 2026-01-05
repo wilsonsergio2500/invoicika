@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
 using WebAPI.Dtos;
 using WebAPI.Models;
+using WebAPI.Helpers;
 
 namespace WebAPI.Services
 {
@@ -9,6 +10,7 @@ namespace WebAPI.Services
     {
         Task<ItemGroupDto> GetItemGroupByIdAsync(Guid id);
         Task<IEnumerable<ItemGroupDto>> GetAllItemGroupsAsync();
+        Task<PaginationResult<ItemGroupDto>> GetGroupItemsPagedAndSortedAsync(string? searchTerm, int pageNumber, int pageSize);
         Task CreateItemGroupAsync(ItemGroupDto dto);
         Task<bool> UpdateItemGroupAsync(Guid id, ItemGroupDto dto);
         Task DeleteItemGroupAsync(Guid id);
@@ -57,6 +59,40 @@ namespace WebAPI.Services
             });
         }
 
+        public async Task<PaginationResult<ItemGroupDto>> GetGroupItemsPagedAndSortedAsync(string? searchTerm, int pageNumber, int pageSize)
+        {
+            var query = _context.ItemGroups
+                .Include(g => g.ItemGroupItems)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower();
+                query = query.Where(g =>
+                    g.Title.ToLower().Contains(searchTerm) ||
+                    (g.Description != null && g.Description.ToLower().Contains(searchTerm))
+                );
+            }
+
+            var totalCount = await query.CountAsync();
+            var groups = await query
+                .OrderBy(g => g.Title)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var dtos = groups.Select(group => new ItemGroupDto
+            {
+                ItemGroupId = group.ItemGroupId,
+                Title = group.Title,
+                Description = group.Description,
+                User_id = group.User_id,
+                ItemIds = group.ItemGroupItems.Select(i => i.Item_id).ToList()
+            });
+
+            return new PaginationResult<ItemGroupDto>(dtos, totalCount, pageNumber, pageSize);
+        }
+
         public async Task CreateItemGroupAsync(ItemGroupDto dto)
         {
             var group = new ItemGroup
@@ -70,6 +106,8 @@ namespace WebAPI.Services
                     Item_id = itemId
                 }).ToList()
             };
+            
+            dto.ItemGroupId = group.ItemGroupId;
 
             _context.ItemGroups.Add(group);
             await _context.SaveChangesAsync();
