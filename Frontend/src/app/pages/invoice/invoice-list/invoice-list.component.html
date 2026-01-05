@@ -37,68 +37,116 @@
   </nz-page-header-extra>
 </nz-page-header>
 
-<nz-table
-  #basicTable
-  [nzData]="listOfInvoices"
-  [nzFrontPagination]="false"
-  [nzLoading]="loading"
-  [nzTotal]="total"
-  [nzPageSize]="pageSize"
-  [nzPageIndex]="pageIndex"
-  (nzQueryParams)="onQueryParamsChange($event)"
-  nzBordered
->
-  <thead>
-  <tr>
-    <th nzColumnKey="customerInvoiceId" nzShowSort>Invoice ID</th>
-    <th nzColumnKey="customer_id" nzShowSort>Customer Name</th>
-    <th nzColumnKey="invoiceDate" nzShowSort>Invoice Date</th>
-    <th nzColumnKey="totalAmount" nzShowSort>Total Amount</th>
-    <th nzColumnKey="totalAmount" nzShowSort>By</th>
-    <th nzColumnKey="status">
-      Status
-    </th>
-    <th nzColumnKey="actions">Actions</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let invoice of listOfInvoices">
-    <td>{{ invoice.customerInvoiceId }}</td>
-    <td>{{ getCustomerName(invoice.customer_id) }}</td>
-    <td>{{ invoice.invoiceDate | date }}</td>
-    <td>{{ invoice.totalAmount | currency }}</td>
-    <td>{{ getUserName(invoice.user_id) }}</td>
-    <td>
+<div class="desktop-view">
+  <nz-table
+    #basicTable
+    [nzData]="listOfInvoices"
+    [nzFrontPagination]="false"
+    [nzLoading]="loading"
+    [nzTotal]="total"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageIndex"
+    (nzQueryParams)="onQueryParamsChange($event)"
+    nzBordered
+  >
+    <thead>
+    <tr>
+      <th nzColumnKey="customerInvoiceId" nzShowSort>Invoice ID</th>
+      <th nzColumnKey="customer_id" nzShowSort>Customer Name</th>
+      <th nzColumnKey="invoiceDate" nzShowSort>Invoice Date</th>
+      <th nzColumnKey="totalAmount" nzShowSort>Total Amount</th>
+      <th nzColumnKey="totalAmount" nzShowSort>By</th>
+      <th nzColumnKey="status">
+        Status
+      </th>
+      <th nzColumnKey="actions">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let invoice of listOfInvoices">
+      <td>{{ invoice.customerInvoiceId }}</td>
+      <td>{{ getCustomerName(invoice.customer_id) }}</td>
+      <td>{{ invoice.invoiceDate | date }}</td>
+      <td>{{ invoice.totalAmount | currency }}</td>
+      <td>{{ getUserName(invoice.user_id) }}</td>
+      <td>
+        <invoice-status [status]="invoice.status"></invoice-status>
+      </td>
+      <td>
+        <a [routerLink]="['/invoices/show', invoice.customerInvoiceId]">
+            <span
+              nz-icon
+              nzType="eye"
+              nzTheme="outline"
+              style="color: grey"
+            ></span>
+        </a>
+        <nz-divider nzType="vertical"></nz-divider>
+        <a [routerLink]="['/invoices/edit', invoice.customerInvoiceId]">
+            <span
+              nz-icon
+              nzType="edit"
+              nzTheme="outline"
+              style="color: orange"
+            ></span>
+        </a>
+        <nz-divider nzType="vertical"></nz-divider>
+        <a (click)="showDeleteConfirm(invoice)">
+            <span
+              nz-icon
+              nzType="delete"
+              nzTheme="outline"
+              style="color: red"
+            ></span>
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<div class="cart-view">
+  <div *ngFor="let invoice of listOfInvoices" class="card-item">
+    <div class="card-header">
+      <span>{{ invoice.customerInvoiceId }}</span>
       <invoice-status [status]="invoice.status"></invoice-status>
-    </td>
-    <td>
+    </div>
+    <div class="card-body">
+      <div class="info-row">
+        <span class="label">Customer Name:</span>
+        <span class="value">{{ getCustomerName(invoice.customer_id) }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Invoice Date:</span>
+        <span class="value">{{ invoice.invoiceDate | date }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Total Amount:</span>
+        <span class="value">{{ invoice.totalAmount | currency }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">By:</span>
+        <span class="value">{{ getUserName(invoice.user_id) }}</span>
+      </div>
+    </div>
+    <div class="card-footer">
       <a [routerLink]="['/invoices/show', invoice.customerInvoiceId]">
-          <span
-            nz-icon
-            nzType="eye"
-            nzTheme="outline"
-            style="color: grey"
-          ></span>
+        <span nz-icon nzType="eye" nzTheme="outline" style="color: grey"></span>
       </a>
-      <nz-divider nzType="vertical"></nz-divider>
       <a [routerLink]="['/invoices/edit', invoice.customerInvoiceId]">
-          <span
-            nz-icon
-            nzType="edit"
-            nzTheme="outline"
-            style="color: orange"
-          ></span>
+        <span nz-icon nzType="edit" nzTheme="outline" style="color: orange"></span>
       </a>
-      <nz-divider nzType="vertical"></nz-divider>
       <a (click)="showDeleteConfirm(invoice)">
-          <span
-            nz-icon
-            nzType="delete"
-            nzTheme="outline"
-            style="color: red"
-          ></span>
+        <span nz-icon nzType="delete" nzTheme="outline" style="color: red"></span>
       </a>
-    </td>
-  </tr>
-  </tbody>
-</nz-table>
+    </div>
+  </div>
+  <nz-pagination
+    [(nzPageIndex)]="pageIndex"
+    [nzTotal]="total"
+    [nzPageSize]="pageSize"
+    (nzPageIndexChange)="onPageIndexChange($event)"
+    nzSimple
+    *ngIf="total > pageSize"
+  ></nz-pagination>
+</div>

@@ -138,4 +138,9 @@ export class InvoiceListComponent implements OnInit {
   onBack(): void {
     this.location.back();
   }
+
+  onPageIndexChange(pageIndex: number): void {
+    this.pageIndex = pageIndex;
+    this.loadDataFromServer(this.pageIndex, this.pageSize, null, null, []);
+  }
 }
