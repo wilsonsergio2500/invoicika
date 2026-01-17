@@ -1,0 +1,64 @@
+.drawer-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cart-view {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 4px;
+
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .card-item {
+    margin-bottom: 12px;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      border-color: #1890ff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+    }
+
+    .card-header {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 14px;
+      background: #fafafa;
+    }
+
+    .card-body {
+      padding: 8px 12px;
+
+      .info-row {
+        display: flex;
+        margin-bottom: 4px;
+        font-size: 13px;
+
+        .label {
+          color: rgba(0, 0, 0, 0.45);
+          width: 100px;
+          flex-shrink: 0;
+        }
+
+        .value {
+          color: rgba(0, 0, 0, 0.85);
+          word-break: break-all;
+        }
+      }
+    }
+  }
+}

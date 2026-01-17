@@ -103,7 +103,8 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
     NzCalendarModule,
     NzCascaderModule,
     NzDrawerModule,
-    NzEmptyModule
+    NzEmptyModule,
+    NzSpinModule
   ]
 })
 export class NgZorroModule { }

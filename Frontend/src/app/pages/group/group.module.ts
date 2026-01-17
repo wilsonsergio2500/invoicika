@@ -7,7 +7,7 @@ import { GroupEditComponent } from './group-edit/group-edit.component';
 import { GroupAddComponent } from './group-add/group-add.component';
 import { GroupItemListComponent } from '../group/components';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgZorroModule } from '@modules';
+import {NgZorroModule, SharedModule} from '@modules';
 
 @NgModule({
   declarations: [
@@ -22,6 +22,7 @@ import { NgZorroModule } from '@modules';
     ReactiveFormsModule,
     NgZorroModule,
     FormsModule,
+    SharedModule
   ],
 })
 export class GroupModule {}

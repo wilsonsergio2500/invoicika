@@ -1,19 +1,23 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {NgZorroModule} from "@modules/ng-zorro";
-import {InvoiceStatusComponent} from "../shared/components";
+import {InvoiceStatusComponent, ItemSelectionDrawerComponent} from "../shared/components";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
-    InvoiceStatusComponent
+    InvoiceStatusComponent,
+    ItemSelectionDrawerComponent
   ],
   imports: [
     CommonModule,
-    NgZorroModule
+    NgZorroModule,
+    FormsModule
   ],
   exports: [
     CommonModule,
-    InvoiceStatusComponent
+    InvoiceStatusComponent,
+    ItemSelectionDrawerComponent
   ]
 })
 export class SharedModule { }

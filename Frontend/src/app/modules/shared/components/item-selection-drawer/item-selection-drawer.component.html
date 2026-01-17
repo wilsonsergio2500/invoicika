@@ -1,0 +1,55 @@
+<nz-drawer
+  [nzVisible]="visible"
+  nzPlacement="right"
+  nzTitle="Select Item"
+  [nzWidth]="400"
+  (nzOnClose)="close()"
+>
+  <ng-container *nzDrawerContent>
+    <div class="drawer-content">
+      <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="margin-bottom: 16px;">
+        <input type="text" [(ngModel)]="searchText" nz-input placeholder="Search Name / SalePrice"
+               (keyup.enter)="onSearch()"/>
+      </nz-input-group>
+      <ng-template #suffixIconButton>
+        <button nz-button nzSearch (click)="onSearch()">
+          <span nz-icon nzType="search"></span>
+        </button>
+      </ng-template>
+
+      <div class="cart-view">
+        <div *ngFor="let item of listOfItems" class="card-item" (click)="selectItem(item)">
+          <div class="card-header">
+            <span>{{ item.name }}</span>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <span class="label">Description:</span>
+              <span class="value">{{ item.description }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Sale Price:</span>
+              <span class="value">{{ item.salePrice | currency }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Quantity:</span>
+              <span class="value">{{ item.quantity }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pagination-container" *ngIf="total > pageSize">
+          <nz-pagination
+            [(nzPageIndex)]="pageIndex"
+            [nzTotal]="total"
+            [nzPageSize]="pageSize"
+            (nzPageIndexChange)="onPageIndexChange($event)"
+            nzSimple
+          ></nz-pagination>
+        </div>
+
+        <nz-empty *ngIf="!loading && listOfItems.length === 0"></nz-empty>
+      </div>
+    </div>
+  </ng-container>
+</nz-drawer>
