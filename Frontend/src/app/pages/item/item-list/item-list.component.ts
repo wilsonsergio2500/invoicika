@@ -64,6 +64,11 @@ export class ItemListComponent implements OnInit {
     this.loadDataFromServer(this.pageIndex, this.pageSize, null, null, [], this.searchText);
   }
 
+  onPageIndexChange(index: number): void {
+    this.pageIndex = index;
+    this.loadDataFromServer(this.pageIndex, this.pageSize, null, null, [], this.searchText);
+  }
+
   deleteItem(item: any): void {
     this.itemService.deleteItem(item.itemId).subscribe(() => {
       this.listOfItems = this.listOfItems.filter(i => i.itemId !== item.itemId);

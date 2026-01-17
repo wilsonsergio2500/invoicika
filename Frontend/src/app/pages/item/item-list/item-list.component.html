@@ -20,43 +20,87 @@
   </nz-page-header-extra>
 </nz-page-header>
 
-<nz-table
-  #basicTable
-  [nzData]="listOfItems"
-  [nzFrontPagination]="false"
-  [nzLoading]="loading"
-  [nzTotal]="total"
-  [nzPageSize]="pageSize"
-  [nzPageIndex]="pageIndex"
-  (nzQueryParams)="onQueryParamsChange($event)"
-  nzBordered
->
-  <thead>
-    <tr>
-      <th nzColumnKey="name" nzShowSort>Item Name</th>
-      <th nzColumnKey="description" nzShowSort>Description</th>
-      <th nzColumnKey="purchasePrice" nzShowSort>Purchase Price</th>
-      <th nzColumnKey="salePrice" nzShowSort>Sale Price</th>
-      <th nzColumnKey="quantity" nzShowSort>Quantity</th>
-      <th nzColumnKey="actions">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of listOfItems">
-      <td>{{ item.name }}</td>
-      <td>{{ item.description }}</td>
-      <td>{{ item.purchasePrice | currency }}</td>
-      <td>{{ item.salePrice | currency }}</td>
-      <td>{{ item.quantity }}</td>
-      <td>
-        <a [routerLink]="['/items/edit', item.itemId]">
-          <span nz-icon nzType="edit" nzTheme="outline" style="color: orange;"></span>
-        </a>
-        <nz-divider nzType="vertical"></nz-divider>
-        <a (click)="showDeleteConfirm(item)">
-          <span nz-icon nzType="delete" nzTheme="outline" style="color: red"></span>
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</nz-table>
+<div class="desktop-view">
+  <nz-table
+    #basicTable
+    [nzData]="listOfItems"
+    [nzFrontPagination]="false"
+    [nzLoading]="loading"
+    [nzTotal]="total"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageIndex"
+    (nzQueryParams)="onQueryParamsChange($event)"
+    nzBordered
+  >
+    <thead>
+      <tr>
+        <th nzColumnKey="name" nzShowSort>Item Name</th>
+        <th nzColumnKey="description" nzShowSort>Description</th>
+        <th nzColumnKey="purchasePrice" nzShowSort>Purchase Price</th>
+        <th nzColumnKey="salePrice" nzShowSort>Sale Price</th>
+        <th nzColumnKey="quantity" nzShowSort>Quantity</th>
+        <th nzColumnKey="actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of listOfItems">
+        <td>{{ item.name }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.purchasePrice | currency }}</td>
+        <td>{{ item.salePrice | currency }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>
+          <a [routerLink]="['/items/edit', item.itemId]">
+            <span nz-icon nzType="edit" nzTheme="outline" style="color: orange;"></span>
+          </a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a (click)="showDeleteConfirm(item)">
+            <span nz-icon nzType="delete" nzTheme="outline" style="color: red"></span>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<div class="cart-view">
+  <div *ngFor="let item of listOfItems" class="card-item">
+    <div class="card-header">
+      <span>{{ item.name }}</span>
+    </div>
+    <div class="card-body">
+      <div class="info-row">
+        <span class="label">Description:</span>
+        <span class="value">{{ item.description }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Purchase Price:</span>
+        <span class="value">{{ item.purchasePrice | currency }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Sale Price:</span>
+        <span class="value">{{ item.salePrice | currency }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Quantity:</span>
+        <span class="value">{{ item.quantity }}</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a [routerLink]="['/items/edit', item.itemId]">
+        <span nz-icon nzType="edit" nzTheme="outline" style="color: orange"></span>
+      </a>
+      <a (click)="showDeleteConfirm(item)">
+        <span nz-icon nzType="delete" nzTheme="outline" style="color: red"></span>
+      </a>
+    </div>
+  </div>
+  <nz-pagination
+    [(nzPageIndex)]="pageIndex"
+    [nzTotal]="total"
+    [nzPageSize]="pageSize"
+    (nzPageIndexChange)="onPageIndexChange($event)"
+    nzSimple
+    *ngIf="total > pageSize"
+  ></nz-pagination>
+</div>
