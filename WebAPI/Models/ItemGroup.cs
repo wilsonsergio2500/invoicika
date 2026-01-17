@@ -24,5 +24,7 @@ namespace WebAPI.Models
         public virtual User? User { get; set; }
 
         public virtual ICollection<ItemGroupItem> ItemGroupItems { get; set; } = new List<ItemGroupItem>();
+
+        public virtual ICollection<ItemGroupLine> ItemGroupLines { get; set; } = new List<ItemGroupLine>();
     }
 }

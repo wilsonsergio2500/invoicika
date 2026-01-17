@@ -14,6 +14,7 @@ namespace WebAPI.Data
         public DbSet<Item> Items { get; set; }
         public DbSet<ItemGroup> ItemGroups { get; set; }
         public DbSet<ItemGroupItem> ItemGroupItems { get; set; }
+        public DbSet<ItemGroupLine> ItemGroupLines { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<VAT> VATs { get; set; }
