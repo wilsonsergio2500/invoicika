@@ -35,6 +35,9 @@ namespace WebAPI.Models
         [Column(TypeName = "decimal(10,2)")]
         public decimal TotalAmount { get; set; }
 
+        [Timestamp]
+        public byte[]? Concurrency { get; set; }
+
         public virtual ICollection<CustomerInvoiceGroupItemLine> GroupItemLines { get; set; } = new List<CustomerInvoiceGroupItemLine>();
     }
 }

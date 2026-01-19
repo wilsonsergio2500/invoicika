@@ -23,6 +23,9 @@ namespace WebAPI.Models
         [JsonIgnore]
         public virtual User? User { get; set; }
 
+        [Timestamp]
+        public byte[]? Concurrency { get; set; }
+
         public virtual ICollection<ItemGroupItem> ItemGroupItems { get; set; } = new List<ItemGroupItem>();
 
         public virtual ICollection<ItemGroupLine> ItemGroupLines { get; set; } = new List<ItemGroupLine>();

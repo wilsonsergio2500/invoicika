@@ -17,6 +17,9 @@ namespace WebAPI.Models
 
         public DateTime? UpdateDate { get; set; }
 
+        [Timestamp]
+        public byte[]? Concurrency { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<User> Users { get; set; } = new List<User>();
     }

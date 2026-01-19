@@ -217,8 +217,52 @@ namespace WebAPI.Services
             }
         }
 
+        public async Task UpdateCustomerInvoiceMetadataAsync(Guid invoiceId, CustomerInvoiceDto updatedInvoice)
+        {
+            CustomerInvoice? existingInvoice = await _context.CustomerInvoices
+                .FirstOrDefaultAsync(i => i.CustomerInvoiceId == invoiceId);
+
+            if (existingInvoice == null) return;
+            existingInvoice.Customer_id = updatedInvoice.Customer_id;
+            existingInvoice.User_id = updatedInvoice.User_id;
+            existingInvoice.InvoiceDate = updatedInvoice.InvoiceDate;
+            existingInvoice.UpdateDate = DateTime.UtcNow; //
+            existingInvoice.SubTotalAmount = updatedInvoice.SubTotalAmount;
+            existingInvoice.VatAmount = updatedInvoice.VatAmount;
+            existingInvoice.TotalAmount = updatedInvoice.TotalAmount;
+            existingInvoice.Vat_id = updatedInvoice.Vat_id;
+            existingInvoice.Status = (InvoiceStatus)updatedInvoice.Status;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpsertInvoiceLineItemAsync(Guid invoiceId, CustomerInvoiceDto updatedInvoice)
+        {
+            IQueryable<CustomerInvoiceLine> customerInvoiceLines =
+                _context.CustomerInvoiceLines.Where(l => l.CustomerInvoice_id == invoiceId);
+
+            _context.CustomerInvoiceLines.RemoveRange(customerInvoiceLines);
+
+            foreach (CustomerInvoiceLineDto line in updatedInvoice.CustomerInvoiceLines)
+            {
+                _context.CustomerInvoiceLines.Add(new CustomerInvoiceLine
+                {
+                    InvoiceLineId = Guid.NewGuid(),
+                    CustomerInvoice_id = invoiceId,
+                    Item_id = line.Item_id,
+                    Quantity = line.Quantity,
+                    Price = line.Price
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<bool> UpdateCustomerInvoiceAsync(Guid id, CustomerInvoiceDto updatedInvoice)
         {
+            await UpdateCustomerInvoiceMetadataAsync(id, updatedInvoice);
+            await UpsertInvoiceLineItemAsync(id, updatedInvoice);
+            /*
             var existingInvoice = await _context.CustomerInvoices
                 .Include(i => i.CustomerInvoiceLines)
                 .Include(i => i.CustomerInvoiceGroupLines)
@@ -236,9 +280,13 @@ namespace WebAPI.Services
             existingInvoice.TotalAmount = updatedInvoice.TotalAmount;
             existingInvoice.Vat_id = updatedInvoice.Vat_id;
             existingInvoice.Status = (InvoiceStatus)updatedInvoice.Status;
+            */
 
-            // Update invoice lines
-            existingInvoice.CustomerInvoiceLines.Clear(); //
+            // Remove existing invoice lines
+            /*
+            _context.CustomerInvoiceLines.RemoveRange(existingInvoice.CustomerInvoiceLines);
+
+            // Add updated invoice lines
             foreach (var line in updatedInvoice.CustomerInvoiceLines)
             {
                 existingInvoice.CustomerInvoiceLines.Add(new CustomerInvoiceLine
@@ -251,8 +299,16 @@ namespace WebAPI.Services
                 });
             }
 
-            // Update group lines
-            existingInvoice.CustomerInvoiceGroupLines.Clear();
+            // Remove existing group lines and their item lines
+            foreach (CustomerInvoiceGroupLine groupLine in existingInvoice.CustomerInvoiceGroupLines.ToList())
+            {
+                _context.CustomerInvoiceGroupItemLines.RemoveRange(groupLine.GroupItemLines);
+            }
+            _context.CustomerInvoiceGroupLines.RemoveRange(existingInvoice.CustomerInvoiceGroupLines);
+            */
+
+            // Add updated group lines
+            /*
             foreach (var groupLineDto in updatedInvoice.CustomerInvoiceGroupLines)
             {
                 existingInvoice.CustomerInvoiceGroupLines.Add(new CustomerInvoiceGroupLine
@@ -276,6 +332,7 @@ namespace WebAPI.Services
                     }).ToList()
                 });
             }
+            */
 
             await _context.SaveChangesAsync();
             return true;

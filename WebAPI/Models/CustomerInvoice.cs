@@ -54,4 +54,8 @@ public class CustomerInvoice
 
     [Required]
     public InvoiceStatus Status { get; set; } = InvoiceStatus.Draft;
+
+    [Timestamp]
+    public byte[]? Concurrency { get; set; } 
+                
 }

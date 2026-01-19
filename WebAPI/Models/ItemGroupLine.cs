@@ -33,5 +33,8 @@ namespace WebAPI.Models
         [Required]
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
+
+        [Timestamp]
+        public byte[]? Concurrency { get; set; }
     }
 }

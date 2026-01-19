@@ -15,6 +15,9 @@ namespace WebAPI.Models
 
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
 
+        [Timestamp]
+        public byte[]? Concurrency { get; set; }
+
         public virtual ICollection<CustomerInvoice> CustomerInvoices { get; set; } = new List<CustomerInvoice>();
     }
 }

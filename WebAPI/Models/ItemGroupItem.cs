@@ -22,5 +22,8 @@ namespace WebAPI.Models
         [ForeignKey(nameof(Item_id))]
         [JsonIgnore]
         public virtual Item Item { get; set; }
+
+        [Timestamp]
+        public byte[]? Concurrency { get; set; }
     }
 }

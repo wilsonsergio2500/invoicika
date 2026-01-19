@@ -26,6 +26,9 @@ namespace WebAPI.Models
 
         public DateTime? UpdateDate { get; set; }
 
+        [Timestamp]
+        public byte[]? Concurrency { get; set; }
+
         public virtual ICollection<CustomerInvoice> CustomerInvoices { get; set; } = new List<CustomerInvoice>();
     }
 }
