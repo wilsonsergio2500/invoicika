@@ -67,6 +67,9 @@ export class AuthState implements NgxsOnInit {
 
   @Action(AuthActions.Initialize)
   onInitialize(ctx: StateContext<IAuthStateModel>) {
+
+    ctx.dispatch(new AuthActions.VerifyExpiration());
+
     if (this.authService.isAuthenticated()) {
       ctx.dispatch(new AuthActions.SetCurrenUser());
     }
@@ -101,10 +104,20 @@ export class AuthState implements NgxsOnInit {
   @Action(AuthActions.SetCurrenUser)
   onSetCurrentUser(ctx: StateContext<IAuthStateModel>, action: AuthActions.SetCurrenUser) {
     const userInfo = this.authService.getUserInfo();
-    console.log('userInfo', userInfo);
     ctx.patchState({
       current: userInfo
     });
+  }
+  @Action(AuthActions.VerifyExpiration)
+  onVerifyExpiration(ctx: StateContext<IAuthStateModel>, action: AuthActions.VerifyExpiration) {
+    const userInfo = this.authService.getUserInfo();
+    if (!!userInfo?.expiration) {
+      const authenticationExpired = userInfo.expiration < Date.now() / 1000;
+      if (authenticationExpired) {
+        this.authService.logout();
+        return;
+      }
+    }
   }
 
 

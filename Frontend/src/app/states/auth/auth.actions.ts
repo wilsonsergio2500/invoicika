@@ -17,6 +17,11 @@ export namespace AuthActions {
     static readonly type = '[Auth] Initialize';
   }
 
+  export class VerifyExpiration {
+    static readonly type = '[Auth] Verify Expiration';
+
+  }
+
   export class Login {
     static readonly type = '[Auth] Login';
 
