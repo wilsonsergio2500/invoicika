@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
-import { environment } from '../../environments/environment'; // Import the environment
+import { environment } from '@env/environment';
+import {ItemsPaginatedResponse} from "@types";
 
 @Injectable({ providedIn: 'root' })
 export class ItemService {
@@ -16,7 +17,7 @@ export class ItemService {
     sortOrder: string | null,
     filters: Array<{ key: string; value: string[] }>,
     searchTerm: string | null
-  ): Observable<any> {
+  ): Observable<ItemsPaginatedResponse> {
     let params = new HttpParams()
       .set('pageNumber', `${pageNumber}`)
       .set('pageSize', `${pageSize}`)
@@ -33,8 +34,7 @@ export class ItemService {
     });
 
     return this.http
-      .get<any>(this.apiUrl, { params })
-      .pipe(catchError(() => of([])));
+      .get<ItemsPaginatedResponse>(this.apiUrl, { params });
   }
 
   createItem(item: any): Observable<void> {

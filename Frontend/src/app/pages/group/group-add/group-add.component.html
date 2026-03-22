@@ -9,7 +9,7 @@
   <nz-form-item>
     <nz-form-label [nzSpan]="7" nzRequired>Title</nz-form-label>
     <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="titleErrorTpl">
-      <input nz-input formControlName="title" placeholder="Enter group title" />
+      <input nz-input formControlName="title" placeholder="Enter group title"/>
       <ng-template #titleErrorTpl let-control>
         <ng-container *ngIf="control.errors?.['required']">
           Please input the group title!
@@ -46,7 +46,8 @@
 
   <nz-form-item>
     <nz-form-control [nzOffset]="7" [nzSpan]="12">
-      <button nz-button nzType="primary" [disabled]="!addGroupForm.valid"><span nz-icon nzType="plus"></span>Create</button>
+      <button nz-button nzType="primary" [disabled]="!addGroupForm.valid"><span nz-icon nzType="plus"></span>Create
+      </button>
       <button nz-button (click)="resetForm($event)">Reset</button>
     </nz-form-control>
   </nz-form-item>
@@ -56,4 +57,4 @@
 
 <app-group-item-list [items]="selectedItems"></app-group-item-list>
 
-<item-selection-drawer [visible]="true"></item-selection-drawer>
+<item-selection-drawer [visible]="true" (itemSelected)="onItemSelected($event)"></item-selection-drawer>

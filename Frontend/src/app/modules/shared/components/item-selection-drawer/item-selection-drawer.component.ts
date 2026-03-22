@@ -33,6 +33,7 @@ export class ItemSelectionDrawerComponent implements OnInit {
     const filters = this.searchText ? [{ key: 'searchTerm', value: [this.searchText] }] : [];
     this.itemService.getItems(this.pageIndex, this.pageSize, null, null, filters, this.searchText).subscribe(
       response => {
+        console.log('Items loaded:', response);
         this.loading = false;
         this.total = response.totalCount;
         this.listOfItems = response.items;
@@ -55,6 +56,7 @@ export class ItemSelectionDrawerComponent implements OnInit {
   }
 
   selectItem(item: any): void {
+    console.log('Item selected:', item);
     this.itemSelected.emit(item);
     this.close();
   }

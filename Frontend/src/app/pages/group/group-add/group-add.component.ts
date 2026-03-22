@@ -90,4 +90,7 @@ export class GroupAddComponent implements OnInit {
   onBack(): void {
     this.router.navigate(['/groups/all']);
   }
+  onItemSelected($event: any): void {
+
+  }
 }
