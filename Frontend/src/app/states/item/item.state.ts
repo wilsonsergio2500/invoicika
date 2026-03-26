@@ -3,8 +3,9 @@ import {Injectable} from '@angular/core';
 import {IItemStateModel, ItemType} from './item.model';
 import {ItemActions} from './item.actions';
 import {ItemService} from "@services/item.service";
-import {ItemsPaginatedResponse} from "@types";
+import {ItemModel, ItemsPaginatedResponse} from "@types";
 import {tap} from "rxjs/operators";
+import {Observable, of} from "rxjs";
 
 
 @State<IItemStateModel>({
@@ -48,6 +49,16 @@ export class ItemState {
     return state.paginatedResponse;
   }
 
+  @Selector()
+  static getItems(state: IItemStateModel): Array<ItemModel> {
+    return state.paginatedResponse?.items || [];
+  }
+
+  @Selector()
+  static IsEmpty(state: IItemStateModel): boolean {
+    return !state.loading && state.paginatedResponse?.items.length === 0;
+  }
+
   @Action(ItemActions.Done)
   onDone(ctx: StateContext<IItemStateModel>) {
     ctx.patchState({
@@ -78,9 +89,15 @@ export class ItemState {
 
     const {pageNumber, pageSize, sortField, sortOrder, filters, searchTerm} = action.request;
     return this.itemService.getItems(pageNumber, pageSize, sortField, sortOrder, filters, searchTerm).pipe(
-      tap(response => ctx.patchState({
-        paginatedResponse: response,
-      }))
+      tap(response => {
+
+          ctx.patchState({
+            paginatedResponse: response,
+          })
+
+          ctx.dispatch(new ItemActions.Done());
+        }
+      )
     );
 
 

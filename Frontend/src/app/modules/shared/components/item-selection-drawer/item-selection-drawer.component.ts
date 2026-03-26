@@ -1,6 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ItemService } from 'src/app/services/item.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {ItemService} from 'src/app/services/item.service';
+import {NzMessageService} from 'ng-zorro-antd/message';
+import {Store} from "@ngxs/store";
+import {ItemActions, ItemFetchRequest, ItemState} from "@states/item";
+import {Observable} from "rxjs";
+import {ItemModel} from "@types";
 
 @Component({
   selector: 'item-selection-drawer',
@@ -11,6 +15,9 @@ export class ItemSelectionDrawerComponent implements OnInit {
   @Input() visible = false;
   @Output() readonly visibleChange = new EventEmitter<boolean>();
   @Output() readonly itemSelected = new EventEmitter<any>();
+  readonly items$: Observable<Array<ItemModel>> = inject(Store).select(ItemState.getItems);
+  readonly empty$: Observable<boolean> = inject(Store).select(ItemState.IsEmpty);
+  readonly loading$: Observable<boolean> = inject(Store).select(ItemState.IsLoading);
 
   listOfItems: any[] = [];
   loading = false;
@@ -20,29 +27,29 @@ export class ItemSelectionDrawerComponent implements OnInit {
   searchText = '';
 
   constructor(
+    private readonly store: Store,
     private itemService: ItemService,
-    private message: NzMessageService
-  ) {}
+    private message: NzMessageService,
+  ) {
+  }
 
   ngOnInit(): void {
     this.loadData();
   }
 
   loadData(): void {
-    this.loading = true;
-    const filters = this.searchText ? [{ key: 'searchTerm', value: [this.searchText] }] : [];
-    this.itemService.getItems(this.pageIndex, this.pageSize, null, null, filters, this.searchText).subscribe(
-      response => {
-        console.log('Items loaded:', response);
-        this.loading = false;
-        this.total = response.totalCount;
-        this.listOfItems = response.items;
-      },
-      error => {
-        this.loading = false;
-        this.message.error('Error loading items');
-      }
-    );
+    const filters = this.searchText ? [{key: 'searchTerm', value: [this.searchText]}] : [];
+    const request = <ItemFetchRequest>{
+      pageSize: this.pageSize,
+      pageNumber: this.pageIndex,
+      sortField: null,
+      sortOrder: null,
+      filters: filters,
+      searchTerm: this.searchText
+    }
+
+    this.store.dispatch(new ItemActions.LoadItems(request));
+
   }
 
   onSearch(): void {

@@ -18,7 +18,7 @@
       </ng-template>
 
       <div class="cart-view">
-        <div *ngFor="let item of listOfItems" class="card-item" (click)="selectItem(item)">
+        <div *ngFor="let item of items$ | async" class="card-item" (click)="selectItem(item)">
           <div class="card-header">
             <span>{{ item.name }}</span>
           </div>
@@ -48,7 +48,10 @@
           ></nz-pagination>
         </div>
 
-        <nz-empty *ngIf="!loading && listOfItems.length === 0"></nz-empty>
+        <ng-template ngIf="empty$ | async">
+          <nz-empty></nz-empty>
+        </ng-template>
+
       </div>
     </div>
   </ng-container>

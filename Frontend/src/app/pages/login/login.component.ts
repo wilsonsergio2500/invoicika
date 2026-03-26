@@ -1,9 +1,6 @@
 import {Component} from '@angular/core';
-import {Router} from '@angular/router';
 import {Store} from '@ngxs/store'
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {AuthService} from 'src/app/services/auth.service';
-import {NzMessageService} from 'ng-zorro-antd/message';
 import {AuthActions} from "@states/auth";
 
 @Component({
